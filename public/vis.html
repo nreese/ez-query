@@ -1,0 +1,9 @@
+<div ng-controller="KbnEzQueryVisController" class="ez-query">
+
+  <div class="form-group" ng-repeat="query in vis.params.luceneQueries" ng-show="query.query && query.name">
+    <label>
+      <input type="radio" ng-model="$parent.luceneQuery" value="{{query.query}}" ng-change="filter()">
+    </label>
+    {{query.name}}
+  </div>
+</div>

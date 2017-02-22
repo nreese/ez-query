@@ -1,0 +1,23 @@
+const _ = require('lodash');
+const module = require('ui/modules').get('kibana');
+
+define(function (require) {
+  module.directive('luceneQueries', function (Private) {
+    return {
+      restrict: 'E',
+      replace: true,
+      scope: {
+        queries: '='
+      },
+      template: require('./luceneQueries.html'),
+      link: function (scope, element, attrs) {
+        scope.add = function() {
+          scope.queries.push({});
+        }
+        scope.remove = function(index) {
+          scope.queries.splice(index, 1);
+        }
+      }
+    }
+  });
+});

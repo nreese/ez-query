@@ -26,12 +26,12 @@ define(function (require) {
         $queryInput = $("input[aria-label='Filter input']");
       }
       if (!$querySubmit) {
-        $querySubmit = $("input[aria-label='Filter Dashboards']");
+        $querySubmit = $("button[aria-label='Filter Dashboards']");
       }
 
       if ($queryInput && $querySubmit) {
         appState.query.query_string.query = queryString;
-        appState.save();
+        //appState.save();
         $queryInput.val(queryString);
         if (submit) {
           $timeout(function() {

@@ -3,6 +3,7 @@ import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/templat
 define(function (require) {
   require('ui/registry/vis_types').register(EzQueryVisProvider);
   require('plugins/ez-query/vis.less');
+  require('plugins/ez-query/ezQueryRegistry');
   require('plugins/ez-query/directives/luceneQueries');
   require('plugins/ez-query/visController');
 

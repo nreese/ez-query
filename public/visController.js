@@ -4,18 +4,23 @@ import $ from 'jquery';
 define(function (require) {
   var module = require('ui/modules').get('kibana/ez-query', ['kibana']);
   
-  module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private) {
+  module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private, ezQueryRegistry) {
     let $queryInput = null;
     let $querySubmit = null;
     const appState = getAppState();
     const DEFAULT_QUERY = '*';
 
-    $scope.luceneQuery = appState.query.query_string.query;
-    selectDefault();
+    initLuceneQuery();
+    const unregisterFunc = ezQueryRegistry.register(function() {
+      return $scope.luceneQuery;
+    });
+    $scope.$on('$destroy', function() {
+      if (unregisterFunc) unregisterFunc();
+    });
 
     $scope.filter = function() {
       if ($scope.luceneQuery) {
-        setQuery($scope.luceneQuery, true);
+        setQuery(ezQueryRegistry.buildQuery(), true);
       } else {
         setQuery(DEFAULT_QUERY, true);
       }
@@ -41,11 +46,13 @@ define(function (require) {
       }
     }
 
-    function selectDefault() {
-      if ($scope.luceneQuery === DEFAULT_QUERY) {
-        $scope.luceneQuery = _.get($scope.vis.params, 'luceneQueries[0].query', DEFAULT_QUERY);
-        setQuery($scope.luceneQuery, false);
-      }
+    function initLuceneQuery() {
+      $scope.luceneQuery = '';
+      $scope.vis.params.luceneQueries.forEach(query => {
+        if (_.includes(appState.query.query_string.query, query.query)) {
+          $scope.luceneQuery = query.query;
+        }
+      });
     }
   });
 });

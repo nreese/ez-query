@@ -19,6 +19,7 @@ define(function (require) {
       params: {
         editor: require('plugins/ez-query/options.html'),
         defaults: {
+          buttonType: 'radio',
           luceneQueries: []
         }
       },

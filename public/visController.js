@@ -10,20 +10,25 @@ define(function (require) {
     const appState = getAppState();
     const DEFAULT_QUERY = '*';
 
-    initLuceneQuery();
+    init();
     const unregisterFunc = ezQueryRegistry.register(function() {
-      return $scope.luceneQuery;
+      let query = '';
+      switch ($scope.vis.params.buttonType) {
+        case 'radio':
+          query = radioQuery();
+          break;
+        case 'checkbox':
+          query = checkboxQuery();
+          break;
+      }
+      return query;
     });
     $scope.$on('$destroy', function() {
       if (unregisterFunc) unregisterFunc();
     });
 
     $scope.filter = function() {
-      if ($scope.luceneQuery) {
-        setQuery(ezQueryRegistry.buildQuery(), true);
-      } else {
-        setQuery(DEFAULT_QUERY, true);
-      }
+      setQuery(ezQueryRegistry.buildQuery(), true);
     }
 
     function setQuery(queryString, submit) {
@@ -46,11 +51,34 @@ define(function (require) {
       }
     }
 
-    function initLuceneQuery() {
-      $scope.luceneQuery = '';
+    function radioQuery() {
+      return $scope.radioVal;
+    }
+
+    function checkboxQuery() {
+      let checkboxQueryString = '';
+      const selected = [];
+      _.forOwn($scope.checkboxes, (value, key) => {
+        if (value) selected.push(key);
+      });
+      $scope.vis.params.luceneQueries.forEach(query => {
+        if (_.includes(selected, query.name)) {
+          if (checkboxQueryString.length > 0) {
+            checkboxQueryString += ' OR ';
+          }
+          checkboxQueryString += '(' + query.query + ')';
+        }
+      });
+      return checkboxQueryString;
+    }
+
+    function init() {
+      $scope.radioVal = '';
+      $scope.checkboxes = {};
       $scope.vis.params.luceneQueries.forEach(query => {
         if (_.includes(appState.query.query_string.query, query.query)) {
-          $scope.luceneQuery = query.query;
+          $scope.radioVal = query.query;
+          $scope.checkboxes[query.name] = true;
         }
       });
     }

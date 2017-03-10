@@ -1,1 +1,13 @@
-<lucene-queries queries="vis.params.luceneQueries"></lucene-queries>
+<div class="form-group">
+  <div class="form-group">
+    <label>
+      Selection Style
+    </label>
+    <select class="form-control"
+      ng-model="vis.params.buttonType">
+      <option value="radio">Single (radio)</option>
+      <option value="checkbox">Multiple (checkbox)</option>
+    </select>
+  </div>
+  <lucene-queries queries="vis.params.luceneQueries"></lucene-queries>
+</div>

@@ -4,10 +4,11 @@ import $ from 'jquery';
 define(function (require) {
   var module = require('ui/modules').get('kibana/ez-query', ['kibana']);
   
-  module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private, ezQueryRegistry) {
+  module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private, ezQueryRegistry, savedVisualizations) {
     const queryFilter = Private(require('ui/filter_bar/query_filter'));
     let $queryInput = null;
     let $querySubmit = null;
+    let syncedTimelionVis = null;
     const appState = getAppState();
     const DEFAULT_QUERY = '*';
 
@@ -125,7 +126,20 @@ define(function (require) {
       return existingFilter;
     }
 
-    function getSelectedQueries() {
+    function syncTimelionVis(selected) {
+      const timefield = 'FIRST_OCCURRENCE_DATE';
+      const index = 'denver_crime';
+      let expressions = [];
+      selected.forEach(function(query) {
+        expressions.push(
+          `.es(q='${query.query}', index='${index}', timefield='${timefield}').label('${query.name}')`);
+      });
+
+      syncedTimelionVis.vis.params.interval = 'auto';
+      syncedTimelionVis.vis.params.expression = expressions.join(', ');
+    }
+
+    function getSelectedLuceneQueries() {
       const selected = [];
       switch ($scope.vis.params.buttonType) {
         case 'radio':

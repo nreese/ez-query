@@ -12,16 +12,11 @@ define(function (require) {
 
     init();
     const unregisterFunc = ezQueryRegistry.register(function() {
-      let query = '';
-      switch ($scope.vis.params.buttonType) {
-        case 'radio':
-          query = radioQuery();
-          break;
-        case 'checkbox':
-          query = checkboxQuery();
-          break;
-      }
-      return query;
+      const selected = getSelectedLuceneQueries();
+      const queryString = _.map(selected, query => {
+        return '(' + query.query + ')';
+      }).join(' OR ');
+      return queryString;
     });
     $scope.$on('$destroy', function() {
       if (unregisterFunc) unregisterFunc();
@@ -51,25 +46,29 @@ define(function (require) {
       }
     }
 
-    function radioQuery() {
-      return $scope.radioVal;
-    }
-
-    function checkboxQuery() {
-      let checkboxQueryString = '';
+    function getSelectedLuceneQueries() {
       const selected = [];
-      _.forOwn($scope.checkboxes, (value, key) => {
-        if (value) selected.push(key);
-      });
-      $scope.vis.params.luceneQueries.forEach(query => {
-        if (_.includes(selected, query.name)) {
-          if (checkboxQueryString.length > 0) {
-            checkboxQueryString += ' OR ';
-          }
-          checkboxQueryString += '(' + query.query + ')';
-        }
-      });
-      return checkboxQueryString;
+      switch ($scope.vis.params.buttonType) {
+        case 'radio':
+          $scope.vis.params.luceneQueries.forEach(query => {
+            if (query.query === $scope.radioVal) {
+              selected.push(query);
+            }
+          });
+          break;
+        case 'checkbox':
+          const checked = [];
+          _.forOwn($scope.checkboxes, (isChecked, queryName) => {
+            if (isChecked) checked.push(queryName);
+          });
+          $scope.vis.params.luceneQueries.forEach(query => {
+            if (_.includes(checked, query.name)) {
+              selected.push(query);
+            }
+          });
+          break;
+      }
+      return selected;
     }
 
     function init() {

@@ -5,30 +5,27 @@ module.service('ezQueryRegistry', function (Private, indexPatterns) {
   class EzQueryRegistry {
     constructor() {
       this.count = 0;
-      this.registry = {};
+      this.registry = new Map();
     }
 
     register(getQueryFunc) {
       const id = this.count++;
-      this.registry[id] = getQueryFunc;
+      this.registry.set(id, getQueryFunc);
       const self = this;
       return function() {
-        delete self.registry[id];
+        self.registry.delete(id);
       }
     }
 
     buildQuery() {
-      let query = '';
-      _.forOwn(this.registry, function(getQueryFunc, visId) {
+      const fragments = [];
+      for (var [key, getQueryFunc] of this.registry) {
         const fragment = getQueryFunc();
         if (fragment && fragment.length > 0) {
-          if (query.length !== 0) {
-            query += ' AND ';
-          }
-          query += '(' + fragment + ')';
+          fragments.push('(' + fragment + ')');
         }
-      });
-      return query;
+      }
+      return fragments.join(' AND ');
     }
   }
 

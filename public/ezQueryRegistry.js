@@ -25,6 +25,9 @@ module.service('ezQueryRegistry', function (Private, indexPatterns) {
           fragments.push('(' + fragment + ')');
         }
       }
+      if (fragments.length === 0) {
+        fragments.push('*');
+      }
       return fragments.join(' AND ');
     }
   }

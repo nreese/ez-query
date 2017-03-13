@@ -15,14 +15,15 @@ define(function (require) {
     }
 
     class LinkedVis {
-      constructor(visId, indexId) {
+      constructor(visId, indexId, options) {
         this.visId = visId;
         this.indexId = indexId;
+        this.options = options;
         this.linkedScope = null;
         this.timefield = null;
 
         indexPatterns.get(this.indexId).then(indexPattern => {
-          this.timefield = indexPattern.timeFieldName
+          this.timefield = indexPattern.timeFieldName;
         });
 
         savedVisualizations.get(this.visId).then(savedVis => {
@@ -31,7 +32,7 @@ define(function (require) {
       }
 
       update(selectedQueries) {
-        if (!this.linkedScope) {
+        if (!this.linkedScope && this.visTitle) {
           $visEl = findLinkedVis(this.visTitle);
           if ($visEl && _.isFunction($visEl[0].isolateScope)) {
             const visScope = $visEl[0].isolateScope();
@@ -45,8 +46,11 @@ define(function (require) {
         if (this.linkedScope && this.timefield) {
           let expressions = [];
           selectedQueries.forEach(query => {
-            expressions.push(
-              `.es(q='${query.query}', index='${this.indexId}', timefield='${this.timefield}').label('${query.name}')`);
+            let expr = `.es(q='${query.query}', index='${this.indexId}', timefield='${this.timefield}').label('${query.name}')`;
+            if (this.options.normalize) {
+              expr += '.range(0,1)';
+            }
+            expressions.push(expr);
           });
           if (expressions.length === 0) {
             expressions.push(

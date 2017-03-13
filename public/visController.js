@@ -4,10 +4,8 @@ import $ from 'jquery';
 define(function (require) {
   var module = require('ui/modules').get('kibana/ez-query', ['kibana']);
   
-
   module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private, ezQueryRegistry, savedVisualizations) {
     const queryFilter = Private(require('ui/filter_bar/query_filter'));
-
     let $queryInput = null;
     let $querySubmit = null;
     let syncedTimelionVis = null;
@@ -129,11 +127,18 @@ define(function (require) {
     }
 
     function syncTimelionVis(selected) {
-      if (!$panelEl) {
-        findPanel('timelion');
+      if (!syncedTimelionVis) {
+        $(".timelion-vis").each(function(index) {
+          const $visEl = $(this);
+          const visScope = _.isFunction($visEl[0].isolateScope) && $visEl[0].isolateScope();
+          if (visScope) {
+            visScope.unregisterVisParamsWatch();
+            syncedTimelionVis = visScope.vis;
+          }
+        });
       }
 
-      if ($panelEl && $linkedEl && $linkedScope) {
+      if (syncedTimelionVis) {
         const timefield = 'FIRST_OCCURRENCE_DATE';
         const index = 'denver_crime';
         let expressions = [];
@@ -142,10 +147,13 @@ define(function (require) {
             `.es(q='${query.query}', index='${index}', timefield='${timefield}').label('${query.name}')`);
         });
 
-        $linkedScope.savedObj.vis.params.interval = 'auto';
-        $linkedScope.savedObj.vis.params.expression = expressions.join(', ');
-        $panelEl.empty();
-        $panelEl.append($linkedEl);
+        if (expressions.length === 0) {
+          expressions.push(
+            `.es(q='*', index='${index}', timefield='${timefield}').label('all')`);
+        }
+
+        syncedTimelionVis.params.interval = 'auto';
+        syncedTimelionVis.params.expression = expressions.join(', ');
       }
     }
 

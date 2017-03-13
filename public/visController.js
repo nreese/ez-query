@@ -127,16 +127,28 @@ define(function (require) {
     }
 
     function syncTimelionVis(selected) {
-      const timefield = 'FIRST_OCCURRENCE_DATE';
-      const index = 'denver_crime';
-      let expressions = [];
-      selected.forEach(function(query) {
-        expressions.push(
-          `.es(q='${query.query}', index='${index}', timefield='${timefield}').label('${query.name}')`);
-      });
+      if (!syncedTimelionVis) {
+        $(".timelion-vis").each(function(index) {
+          const $visEl = $(this);
+          const visScope = _.isFunction($visEl[0].isolateScope) && $visEl[0].isolateScope();
+          if (visScope) {
+            syncedTimelionVis = visScope.vis;
+          }
+        });
+      }
 
-      syncedTimelionVis.vis.params.interval = 'auto';
-      syncedTimelionVis.vis.params.expression = expressions.join(', ');
+      if (syncedTimelionVis) {
+        const timefield = 'FIRST_OCCURRENCE_DATE';
+        const index = 'denver_crime';
+        let expressions = [];
+        selected.forEach(function(query) {
+          expressions.push(
+            `.es(q='${query.query}', index='${index}', timefield='${timefield}').label('${query.name}')`);
+        });
+
+        syncedTimelionVis.params.interval = 'auto';
+        syncedTimelionVis.params.expression = expressions.join(', ');
+      }
     }
 
     function getSelectedLuceneQueries() {

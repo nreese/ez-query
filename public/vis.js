@@ -5,6 +5,7 @@ define(function (require) {
   require('plugins/ez-query/vis.less');
   require('plugins/ez-query/ezQueryRegistry');
   require('plugins/ez-query/directives/fieldSelect');
+  require('plugins/ez-query/directives/linkedVis');
   require('plugins/ez-query/directives/luceneQueries');
   require('plugins/ez-query/visController');
 

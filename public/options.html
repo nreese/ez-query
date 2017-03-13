@@ -36,4 +36,16 @@
       <query-list queries="vis.params.filters" title="'Filter Queries'"></query-list>
     </div>
   </div>
+
+  <div form-group">
+    <label>
+      <input type="checkbox"
+        ng-model="vis.params.linked">
+
+      View lucene query timeseries
+
+      <kbn-info info="When true, this ez-query visualization will dynamically update the linked timelion visualization's expression string to display a time series line for each selected lucene query."></kbn-info>
+    </label>
+  </div>
+  <linked-vis linked-vis="vis.params.linkedVis" ng-show="vis.params.linked"></linked-vis>
 </div>

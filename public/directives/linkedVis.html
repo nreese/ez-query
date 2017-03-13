@@ -1,0 +1,23 @@
+<div class="form-group">
+  <div class="form-group">
+    <label>Linked visualization (timelion)</label>
+    <input class="form-control"
+      placeholder="Filter visualization list"
+      ng-model="linkedVis.visFilter"
+      ng-change="filterVisList()"
+      ng-model-options="{debounce:750}">
+    <select required class="form-control"
+      ng-model="linkedVis.visId"
+      ng-options="vis.id as vis.label for vis in visList">
+    </select>
+  </div>
+  <div class="form-group">
+    <label>
+      Timeseries index
+    </label>
+    <select required class="form-control"
+      ng-model="linkedVis.indexId"
+      ng-options="index for index in indexList">
+    </select>
+  </div>
+</div>

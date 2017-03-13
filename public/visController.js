@@ -4,13 +4,13 @@ import $ from 'jquery';
 define(function (require) {
   var module = require('ui/modules').get('kibana/ez-query', ['kibana']);
   
-  module.controller('KbnEzQueryVisController', function ($scope, $timeout, getAppState, Private, ezQueryRegistry, savedVisualizations) {
+  module.controller('KbnEzQueryVisController', function ($scope, $timeout, Private, ezQueryRegistry, getAppState) {
     const queryFilter = Private(require('ui/filter_bar/query_filter'));
+    const LinkedVis = Private(require('plugins/ez-query/linkedVis'));
+    const appState = getAppState();
     let $queryInput = null;
     let $querySubmit = null;
-    let syncedTimelionVis = null;
-    const appState = getAppState();
-    const DEFAULT_QUERY = '*';
+    let linkedVis = null;
 
     init();
     const unregisterFunc = ezQueryRegistry.register(function() {
@@ -20,6 +20,7 @@ define(function (require) {
       } else {
         $scope.toggle.isChecked = false;
       }
+      if (linkedVis) linkedVis.update(selected);
       const queryString = _.map(selected, query => {
         return '(' + query.query + ')';
       }).join(' OR ');
@@ -126,38 +127,7 @@ define(function (require) {
       return existingFilter;
     }
 
-    function syncTimelionVis(selected) {
-      if (!syncedTimelionVis) {
-        $(".timelion-vis").each(function(index) {
-          const $visEl = $(this);
-          const visScope = _.isFunction($visEl[0].isolateScope) && $visEl[0].isolateScope();
-          if (visScope) {
-            visScope.unregisterVisParamsWatch();
-            syncedTimelionVis = visScope.vis;
-          }
-        });
-      }
-
-      if (syncedTimelionVis) {
-        const timefield = 'FIRST_OCCURRENCE_DATE';
-        const index = 'denver_crime';
-        let expressions = [];
-        selected.forEach(function(query) {
-          expressions.push(
-            `.es(q='${query.query}', index='${index}', timefield='${timefield}').label('${query.name}')`);
-        });
-
-        if (expressions.length === 0) {
-          expressions.push(
-            `.es(q='*', index='${index}', timefield='${timefield}').label('all')`);
-        }
-
-        syncedTimelionVis.params.interval = 'auto';
-        syncedTimelionVis.params.expression = expressions.join(', ');
-      }
-    }
-
-    function getSelectedLuceneQueries() {
+    function getSelectedQueries() {
       const selected = [];
       switch ($scope.vis.params.buttonType) {
         case 'radio':
@@ -229,6 +199,10 @@ define(function (require) {
               $scope.checkboxes[query.name] = true;
             }
           });
+      }
+
+      if ($scope.vis.params.linked) {
+        linkedVis = new LinkedVis($scope.vis.params.linkedVis.visId, $scope.vis.params.linkedVis.indexId);
       }
     }
   });

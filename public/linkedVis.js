@@ -2,7 +2,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 define(function (require) {
-  return function LinkedVisFactory(Private, savedVisualizations) {
+  return function LinkedVisFactory(indexPatterns, Private, savedVisualizations) {
 
     function findLinkedVis(visTitle) {
       let $timelionEl = null;
@@ -19,7 +19,11 @@ define(function (require) {
         this.visId = visId;
         this.indexId = indexId;
         this.linkedScope = null;
-        this.timefield = 'FIRST_OCCURRENCE_DATE';
+        this.timefield = null;
+
+        indexPatterns.get(this.indexId).then(indexPattern => {
+          this.timefield = indexPattern.timeFieldName
+        });
 
         savedVisualizations.get(this.visId).then(savedVis => {
           this.visTitle = savedVis.title;
@@ -38,7 +42,7 @@ define(function (require) {
           }
         }
 
-        if (this.linkedScope) {
+        if (this.linkedScope && this.timefield) {
           let expressions = [];
           selectedQueries.forEach(query => {
             expressions.push(

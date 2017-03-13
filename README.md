@@ -3,6 +3,21 @@ Lucene Queries are a powerful tool that unleashes ElasticSearch. However, your a
 
 ![alt text](https://github.com/nreese/ez-query/blob/gh-pages/images/multiple.gif)
 
+## Dynamic Linked Time-Series
+Experiment functionality that allows an ez-query visualization to dynamically update the linked timelion visualization's expression string to display a time series line for each selected lucene query.
+
+Requires the following changes to KIBANA_HOME/src/core_plugins/timelion/public/vis/timelion_vis_controller.js
+```
+//expose scope
+$element[0].isolateScope = function() {
+  return $scope;
+};
+
+//expose function to unregister  expression watch to avoid duplicate run REST calls
+$scope.unregisterVisParamsWatch = $scope.$watchMulti(['vis.params.expression', 'vis.params.interval'], $scope.search);
+
+```
+
 # Install
 ## Kibana 5.x
 ```bash

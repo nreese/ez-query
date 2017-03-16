@@ -1,0 +1,17 @@
+<div class="form-group">
+  <div class="form-group">
+    <label>Index Pattern</label>
+    <select required class="form-control"
+      ng-model="meta.indexId"
+      ng-options="index for index in indexList"
+      ng-change="fetchFields()">
+    </select>
+  </div>
+  <div class="form-group" ng-show="fieldnames.length > 0">
+    <label>Field</label>
+    <select required class="form-control"
+      ng-model="meta.key"
+      ng-options="fieldname for fieldname in fieldnames">
+    </select>
+  </div>
+</div>

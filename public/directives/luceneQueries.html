@@ -1,11 +1,11 @@
 <div class="form-group">
   <label>
-    Lucene Queries
+    {{title}}
   </label>
   <ul>
     <li ng-repeat="query in queries" class="input-list">
       <input type="text" ng-model="query.name" placeholder="Display Name">
-      <input type="text" ng-model="query.query" placeholder="Lucene Query">
+      <input type="text" ng-model="query.query" placeholder="Query">
       <div class="btn-group">
         <button class="btn btn-xs btn-danger" ng-click="remove($index)">
           <i class="fa fa-times"></i>

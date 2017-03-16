@@ -2,7 +2,7 @@
 
   <div ng-switch on="vis.params.buttonType">
     <div ng-switch-when="radio">
-      <div class="form-group" ng-repeat="query in vis.params.luceneQueries" ng-show="query.query && query.name">
+      <div class="form-group" ng-repeat="query in queries" ng-show="query.query && query.name">
         <label>
           <input type="radio" 
           ng-model="$parent.$parent.radioVal" 
@@ -13,7 +13,7 @@
       </div>
     </div>
     <div ng-switch-when="checkbox">
-      <div class="form-group" ng-repeat="query in vis.params.luceneQueries" ng-show="query.query && query.name">
+      <div class="form-group" ng-repeat="query in queries" ng-show="query.query && query.name">
         <label>
           <input type="checkbox" 
           ng-model="$parent.checkboxes[query.name]" 

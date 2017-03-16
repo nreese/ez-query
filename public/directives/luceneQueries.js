@@ -2,12 +2,13 @@ const _ = require('lodash');
 const module = require('ui/modules').get('kibana');
 
 define(function (require) {
-  module.directive('luceneQueries', function (Private) {
+  module.directive('queryList', function (Private) {
     return {
       restrict: 'E',
       replace: true,
       scope: {
-        queries: '='
+        queries: '=',
+        title: '='
       },
       template: require('./luceneQueries.html'),
       link: function (scope, element, attrs) {

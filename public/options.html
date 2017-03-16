@@ -9,5 +9,23 @@
       <option value="checkbox">Multiple (checkbox)</option>
     </select>
   </div>
-  <lucene-queries queries="vis.params.luceneQueries"></lucene-queries>
+  <div class="form-group">
+    <label>
+      Filter Type
+    </label>
+    <select class="form-control"
+      ng-model="vis.params.filterType">
+      <option value="query">Query Bar</option>
+      <option value="filter">Filter Bar</option>
+    </select>
+  </div>
+  <div ng-switch on="vis.params.filterType">
+    <div ng-switch-when="query">
+      <query-list queries="vis.params.luceneQueries" title="'Lucene Queries'"></query-list>
+    </div>
+    <div ng-switch-when="filter">
+      <field-select meta="vis.params.field_meta"></field-select>
+      <query-list queries="vis.params.filters" title="'Filter Queries'"></query-list>
+    </div>
+  </div>
 </div>

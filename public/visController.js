@@ -23,7 +23,7 @@ define(function (require) {
       if (unregisterFunc) unregisterFunc();
     });
     queryFilter.on('update', function() {
-      if (!findFilter()) {
+      if ($scope.vis.params.filterType === 'filter' && !findFilter()) {
         clearSelectedQueries();
       }
     });
@@ -148,6 +148,16 @@ define(function (require) {
           break;
       }
     }
+
+    $scope.$watch('vis.params', function (visParams) {
+      switch($scope.vis.params.filterType) {
+        case 'filter':
+          $scope.queries = $scope.vis.params.filters;
+          break;
+        default:
+          $scope.queries = $scope.vis.params.luceneQueries;
+      }
+    });
 
     function init() {
       $scope.radioVal = '';

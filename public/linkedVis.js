@@ -15,7 +15,7 @@ define(function (require) {
     }
 
     class LinkedVis {
-      constructor(visId, indexId, options) {
+      constructor(visId, indexId, options, initialSelection) {
         this.visId = visId;
         this.indexId = indexId;
         this.options = options;
@@ -24,14 +24,17 @@ define(function (require) {
 
         indexPatterns.get(this.indexId).then(indexPattern => {
           this.timefield = indexPattern.timeFieldName;
-        });
 
-        savedVisualizations.get(this.visId).then(savedVis => {
-          this.visTitle = savedVis.title;
+          savedVisualizations.get(this.visId).then(savedVis => {
+            this.visTitle = savedVis.title;
+            if (initialSelection) {
+              this.update(initialSelection, true);
+            }
+          });
         });
       }
 
-      update(selectedQueries) {
+      update(selectedQueries, forceSearch) {
         if (!this.linkedScope && this.visTitle) {
           $visEl = findLinkedVis(this.visTitle);
           if ($visEl && _.isFunction($visEl[0].isolateScope)) {
@@ -58,6 +61,10 @@ define(function (require) {
           }
           this.linkedScope.vis.params.interval = 'auto';
           this.linkedScope.vis.params.expression = expressions.join(', ');
+
+          if (forceSearch) {
+            this.linkedScope.search();
+          }
         }
       }
     }

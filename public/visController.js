@@ -14,6 +14,11 @@ define(function (require) {
     init();
     const unregisterFunc = ezQueryRegistry.register(function() {
       const selected = getSelectedQueries();
+      if (selected.length === $scope.queries.length) {
+        $scope.toggle.isChecked = true;
+      } else {
+        $scope.toggle.isChecked = false;
+      }
       const queryString = _.map(selected, query => {
         return '(' + query.query + ')';
       }).join(' OR ');
@@ -28,7 +33,16 @@ define(function (require) {
       }
     });
 
-    $scope.filter = function() {
+    $scope.toggle = {
+      isChecked: false
+    };
+    $scope.toggleAll = function() {
+      $scope.queries.forEach(query => {
+        $scope.checkboxes[query.name] = $scope.toggle.isChecked;
+      });
+      $scope.filter();
+    }
+    $scope.filter = _.debounce(function() {
       switch($scope.vis.params.filterType) {
         case 'filter':
           const selected = getSelectedQueries();
@@ -44,7 +58,7 @@ define(function (require) {
         default:
           setQuery(ezQueryRegistry.buildQuery(), true);
       }
-    }
+    }, _.get($scope.vis.params, 'selectionDebounce', 350), false);
 
     function setFilter(selected) {
       const alias = selected.map(function(query) {

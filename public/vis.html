@@ -13,6 +13,14 @@
       </div>
     </div>
     <div ng-switch-when="checkbox">
+      <div class="form-group">
+        <label>
+          <input type="checkbox"
+            ng-model="toggle.isChecked"
+            ng-change="toggleAll()">
+          All
+        </label>
+      </div>
       <div class="form-group" ng-repeat="query in queries" ng-show="query.query && query.name">
         <label>
           <input type="checkbox" 

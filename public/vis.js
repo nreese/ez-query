@@ -22,7 +22,9 @@ define(function (require) {
         defaults: {
           buttonType: 'radio',
           luceneQueries: [],
-          field_meta: {},
+          field_meta: {
+            filterType: "Query"
+          },
           filters: [],
           filterType: 'query'
         }

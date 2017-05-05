@@ -14,4 +14,9 @@
       ng-options="fieldname for fieldname in fieldnames">
     </select>
   </div>
+  <div class="form-group">
+    <label>Filter Type</label>
+    <select required class="form-control" ng-model="meta.filterType" ng-options="filterType for filterType in filterTypes">
+    </select>
+  </div>
 </div>

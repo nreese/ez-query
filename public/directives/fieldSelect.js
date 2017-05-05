@@ -7,7 +7,8 @@ define(function (require) {
       restrict: 'E',
       replace: true,
       scope: {
-        meta: '='
+        meta: '=',
+        filterType: '='
       },
       template: require('./fieldSelect.html'),
       link: function (scope, element, attrs) {
@@ -15,13 +16,25 @@ define(function (require) {
           scope.indexList = ids;
         });
 
+        if (!scope.filterType) {
+          scope.filterType = "Query";
+        }
+
+        scope.filterTypes = ["Query", "Geo Spatial"].map((value) => { return value });
+
         scope.fieldnames = [];
         scope.fetchFields = function() {
           indexPatterns.get(this.meta.indexId).then(indexPattern => {
             scope.fieldnames = indexPattern.fields.map(function (field) {
               return field.name;
             });
+            scope.fieldnames = scope.fieldnames.sort((a, b) => {
+              return a.localeCompare(b);
+            });
           });
+        }
+        if (scope.meta.indexId) {
+          scope.fetchFields();
         }
       }
     }

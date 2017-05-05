@@ -19,7 +19,7 @@
   </div>
   <div class="form-group">
     <label>
-      Filter Type
+      Type
     </label>
     <select class="form-control"
       ng-model="vis.params.filterType">
@@ -29,11 +29,11 @@
   </div>
   <div ng-switch on="vis.params.filterType">
     <div ng-switch-when="query">
-      <query-list queries="vis.params.luceneQueries" title="'Lucene Queries'"></query-list>
+      <query-list add-query="true" queries="vis.params.luceneQueries" title="'Lucene Queries'"></query-list>
     </div>
     <div ng-switch-when="filter">
-      <field-select meta="vis.params.field_meta"></field-select>
-      <query-list queries="vis.params.filters" title="'Filter Queries'"></query-list>
+      <field-select filterType="vis.params.field_meta.filterType" meta="vis.params.field_meta"></field-select>
+      <query-list add-query="vis.params.field_meta.filterType !== 'Geo Spatial'" queries="vis.params.filters" title="'Filters'"></query-list>
     </div>
   </div>
 </div>

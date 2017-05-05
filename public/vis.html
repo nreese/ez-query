@@ -2,11 +2,12 @@
 
   <div ng-switch on="vis.params.buttonType">
     <div ng-switch-when="radio">
-      <div class="form-group" ng-repeat="query in queries" ng-show="query.query && query.name">
+      <button class="btn btn-xs" ng-click="clearSelect()">Clear Selection</button>
+      <div class="form-group" ng-repeat="query in queries | orderBy:'name'" ng-show="(query.query || query.filter) && query.name">
         <label>
           <input type="radio" 
           ng-model="$parent.$parent.radioVal" 
-          value="{{query.query}}" 
+          value="{{query.name}}" 
           ng-change="filter()">
           {{query.name}}
         </label>
@@ -21,7 +22,7 @@
           All
         </label>
       </div>
-      <div class="form-group" ng-repeat="query in queries" ng-show="query.query && query.name">
+      <div class="form-group" ng-repeat="query in queries" ng-show="(query.query || query.filter) && query.name">
         <label>
           <input type="checkbox" 
           ng-model="$parent.checkboxes[query.name]" 
@@ -32,6 +33,19 @@
     </div>
     <div ng-switch-default>
       Unexpected button type
+    </div>
+  </div>
+
+  <div class="form-group" ng-show="availableFilters.length > 0">
+    <label>Available Filters</label>
+    <select required class="form-control" ng-model="filterToAdd">
+      <option ng-repeat="filter in availableFilters" value="{{filter.$$hashKey}}">{{filter.meta.alias ? filter.meta.alias : filter.meta.key + ": " + filter.meta.value}}</option>
+    </select>
+    <div ng-show="filterToAdd">
+      <input class="new" ng-model="newName" placeholder="Name" />
+      <button class="btn btn-xs btn-success capture" ng-click="addFilter()">
+        <i class="fa fa-plus">Capture Filter</i>
+      </button>
     </div>
   </div>
 </div>

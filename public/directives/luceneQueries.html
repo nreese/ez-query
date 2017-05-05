@@ -5,7 +5,7 @@
   <ul>
     <li ng-repeat="query in queries" class="input-list">
       <input type="text" ng-model="query.name" placeholder="Display Name">
-      <input type="text" ng-model="query.query" placeholder="Query">
+      <input ng-if="addQuery" type="text" ng-model="query.query" placeholder="Query">
       <div class="btn-group">
         <button class="btn btn-xs btn-danger" ng-click="remove($index)">
           <i class="fa fa-times"></i>
@@ -13,7 +13,8 @@
       </div>
     </li>
   </ul>
-  <button class="btn btn-xs btn-success" ng-click="add()">
+  <button ng-disabled="!addQuery" class="btn btn-xs btn-success" ng-click="add()">
     <i class="fa fa-plus"></i>
   </button>
+  <div class="form-group" ng-show="!addQuery">Filters can be added by capturing them from the dashboard</div>
 </div>

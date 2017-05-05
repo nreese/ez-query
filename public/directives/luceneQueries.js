@@ -8,7 +8,8 @@ define(function (require) {
       replace: true,
       scope: {
         queries: '=',
-        title: '='
+        title: '=',
+        addQuery: '='
       },
       template: require('./luceneQueries.html'),
       link: function (scope, element, attrs) {
